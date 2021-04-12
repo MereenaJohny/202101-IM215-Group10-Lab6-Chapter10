@@ -1,4 +1,4 @@
-
+﻿
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,7 +34,13 @@
                     $(select).append('<option value"' + item.id +'">' + item.name +'</option>')                    
                 })
             }); 
-            
+            $.get("http://www.randyconnolly.com/funwebdev/services/visits/countries.php?continent=EU").done(function (data) {
+                select = $("#filterCountry")
+                Array.from(data).forEach(function (item) {
+                    $(select).append('<option value"' + item.id + '">' + item.name + '</option>')
+                })
+            });
+        });    
         });
     </script>
 
