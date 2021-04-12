@@ -28,6 +28,12 @@
                     $(select).append('<option value"' + item.id +'">' + item.name +'</option>')                    
                 })
             }); 
+            $.get("http://www.randyconnolly.com/funwebdev/services/visits/os.php").done(function(data) {
+                select = $("#filterOS")
+                Array.from(data).forEach(function(item) {
+                    $(select).append('<option value"' + item.id +'">' + item.name +'</option>')                    
+                })
+            }); 
             
         });
     </script>
