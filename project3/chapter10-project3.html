@@ -18,9 +18,94 @@
    <script type="text/javascript" src="https://www.google.com/jsapi"></script>        
   <!-- <script type="text/jquery" src="http://www.randyconnolly.com/funwebdev/services/visits/browsers.php"></script> -->
    <!-- <script src="index.js"></script> -->
+   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
+
 $(document).ready(function() {
+  google.charts.load('current', {
+        'packages':['geochart'],
+        'mapsApiKey': 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'
+      });
+      google.charts.setOnLoadCallback(drawRegionsMap);
+
+      function drawRegionsMap() {
+        var data = google.visualization.arrayToDataTable([
+          countryName
+        ]);
+
+        var options = {};
+
+        var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+        chart.draw(data, options);
+      }
+
+
+  google.charts.load('current', {packages: ['corechart', 'bar']});
+google.charts.setOnLoadCallback(drawBasic);
+
+function drawBasic() {
+
+      var data = new google.visualization.DataTable();
+      data.addColumn('timeofday', 'Time of Day');
+      data.addColumn('number', 'Motivation Level');
+
+      data.addRows([
+        [{v: [8, 0, 0], f: '8 am'}, 1],
+        [{v: [9, 0, 0], f: '9 am'}, 2],
+        [{v: [10, 0, 0], f:'10 am'}, 3],
+        [{v: [11, 0, 0], f: '11 am'}, 4],
+        [{v: [12, 0, 0], f: '12 pm'}, 5],
+        [{v: [13, 0, 0], f: '1 pm'}, 6],
+        [{v: [14, 0, 0], f: '2 pm'}, 7],
+        [{v: [15, 0, 0], f: '3 pm'}, 8],
+        [{v: [16, 0, 0], f: '4 pm'}, 9],
+        [{v: [17, 0, 0], f: '5 pm'}, 10],
+      ]);
+
+      var options = {
+        title: 'Motivation Level Throughout the Day',
+        hAxis: {
+          title: 'Time of Day',
+          format: 'h:mm a',
+          viewWindow: {
+            min: [7, 30, 0],
+            max: [17, 30, 0]
+          }
+        },
+        vAxis: {
+          title: 'Rating (scale of 1-10)'
+        }
+      };
+
+      var chart = new google.visualization.ColumnChart(
+        document.getElementById('columnchart'));
+
+      chart.draw(data, options);
+    }
+    google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Task', 'Hours per Day'],
+          ['Work',     11],
+          ['Eat',      2],
+          ['Commute',  2],
+          ['Watch TV', 2],
+          ['Sleep',    7]
+        ]);
+
+        var options = {
+          title: 'My Daily Activities'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
   $.get("http://www.randyconnolly.com/funwebdev/services/visits/browsers.php").done(function(values) {
     select = $("#filterBrowser")
     Array.from(values).forEach(function(row) {
@@ -40,12 +125,16 @@ $(document).ready(function() {
     })
   });
   var data=[];
+  var countryName=[];
+  var count=[];
   $.get("http://www.randyconnolly.com/funwebdev/services/visits/visits.php?continent=EU&month=1&limit=100").done(function(values) {
     data=values;  
     tbody = $("#visitsBody")
     for(var i=0;i<values.length;i++){
+      countryName[i]=values[i].country;
       var date = new Date( values[i].visit_date)
       $(tbody).append('<tr><td>'+values[i].id+'</td><td>' +date.toDateString() +'</td><td>'+values[i].country +'</td><td>'+values[i].browser +'</td><td>'+values[i].operatingSystem +'</td></tr>')   
+      
     }
   });
   $("#filterCountry").change(function () {
@@ -63,7 +152,7 @@ $(document).ready(function() {
     browser = $("#filterBrowser").val();
     country = $("#filterCountry").val();
     os = $("#filterOS").val();
-    console.log("browser : " + browser + " country : " + country + " os : " + os)
+    //console.log("browser : " + browser + " country : " + country + " os : " + os)
     var filter = $.grep(data, function (row, i) {
       if (browser != 0 && os != 0 && country != 0) {
         return (row.country == country && row.operatingSystem == os && row.browser == browser)
@@ -93,12 +182,19 @@ $(document).ready(function() {
     for (var i = 0; i < filter.length; i++) {
       var date = new Date(filter[i].visit_date)
       $(tbody).append('<tr><td>' + filter[i].id + '</td><td>' + date.toDateString() + '</td><td>' + filter[i].country + '</td><td>' + filter[i].browser + '</td><td>' + filter[i].operatingSystem + '</td></tr>')
-    }                        
+    }  
+    //console.log(countryName)    
+    for(var i=0;i<countryName.length;i++){
+    for (j = i + 1; j < countryName.length; j++){
+      if (countryName[i] == countryName[j]){      
+        console.log(countryName.length)
+      }
+    }
+  }                  
   }
+  
 })
-
 </script>
-
 </head>
 
 <body>
