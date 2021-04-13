@@ -20,8 +20,8 @@
    <!-- <script src="index.js"></script> -->
    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script>
+
         $(document).ready(function() {
-            console.log("done")
             $.get("http://www.randyconnolly.com/funwebdev/services/visits/browsers.php").done(function(values) {
                 select = $("#filterBrowser")
                 Array.from(values).forEach(function(row) {
@@ -41,16 +41,17 @@
                 })
 
             });
+            var data=[];
             $.get("http://www.randyconnolly.com/funwebdev/services/visits/visits.php?continent=EU&month=1&limit=100").done(function(values) {
-                tbody = $("#visitsBody")
-                Array.from(values).forEach(function (row){
-                  var visitDate = new Date( row.visit_date)
-                  $(tbody).append('<tr><td>'+row.id+'</td><td>' +visitDate.toDateString() +'</td><td>'+row.country +'</td><td>'+row.browser +'</td><td>'+row.operatingSystem +'</td></tr>')   
-                })
+              data=values;  
+              tbody = $("#visitsBody")
+              for(var i=0;i<values.length;i++){
+                var date = new Date( values[i].visit_date)
+                $(tbody).append('<tr><td>'+values[i].id+'</td><td>' +date.toDateString() +'</td><td>'+values[i].country +'</td><td>'+values[i].browser +'</td><td>'+values[i].operatingSystem +'</td></tr>')   
+              }
             });
-      
-        });
-    </script>
+        })
+</script>
 
 </head>
 
