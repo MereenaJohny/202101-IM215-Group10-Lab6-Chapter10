@@ -19,85 +19,84 @@
   <!-- <script type="text/jquery" src="http://www.randyconnolly.com/funwebdev/services/visits/browsers.php"></script> -->
    <!-- <script src="index.js"></script> -->
    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script>
+<script>
+$(document).ready(function() {
+  $.get("http://www.randyconnolly.com/funwebdev/services/visits/browsers.php").done(function(values) {
+    select = $("#filterBrowser")
+    Array.from(values).forEach(function(row) {
+      $(select).append('<option value"' + row.id +'">' + row.name +'</option>')                    
+     })
+  }); 
+  $.get("http://www.randyconnolly.com/funwebdev/services/visits/os.php").done(function(values) {
+    select = $("#filterOS")
+    Array.from(values).forEach(function(row) {
+      $(select).append('<option value"' + row.id +'">' + row.name +'</option>')                    
+    })
+  }); 
+  $.get("http://www.randyconnolly.com/funwebdev/services/visits/countries.php?continent=EU").done(function (values) {
+    select = $("#filterCountry")
+    Array.from(values).forEach(function (row) {
+      $(select).append('<option value"' + row.id + '">' + row.name + '</option>')
+    })
+  });
+  var data=[];
+  $.get("http://www.randyconnolly.com/funwebdev/services/visits/visits.php?continent=EU&month=1&limit=100").done(function(values) {
+    data=values;  
+    tbody = $("#visitsBody")
+    for(var i=0;i<values.length;i++){
+      var date = new Date( values[i].visit_date)
+      $(tbody).append('<tr><td>'+values[i].id+'</td><td>' +date.toDateString() +'</td><td>'+values[i].country +'</td><td>'+values[i].browser +'</td><td>'+values[i].operatingSystem +'</td></tr>')   
+    }
+  });
+  $("#filterCountry").change(function () {
+    displayfilter();
+  })
+  $("#filterBrowser").change(function () {
+    displayfilter();
+  })
+  $("#filterOS").change(function () {
+    displayfilter();
+  })
+  function displayfilter() {
+    tbody = $("#visitsBody")
+    tbody.empty();
+    browser = $("#filterBrowser").val();
+    country = $("#filterCountry").val();
+    os = $("#filterOS").val();
+    console.log("browser : " + browser + " country : " + country + " os : " + os)
+    var filter = $.grep(data, function (row, i) {
+      if (browser != 0 && os != 0 && country != 0) {
+        return (row.country == country && row.operatingSystem == os && row.browser == browser)
+      }
+      else if (browser != 0 && country != 0) {
+        return (row.country == country && row.browser == browser)
+      }
+      else if (browser != 0 && os != 0) {
+        return (row.browser == browser && row.operatingSystem == os)
+      }
+      else if (os != 0 && country != 0) {
+        return (row.country == country && row.operatingSystem == os)
+      }
+      else if (os != 0) {
+        return (row.operatingSystem == os)
+      }
+      else if (browser != 0) {
+        return (row.browser == browser)
+      }
+      else if (country != 0) {
+        return (row.country == country)
+      }
+      else {
+        return (data);
+      }
+    });
+    for (var i = 0; i < filter.length; i++) {
+      var date = new Date(filter[i].visit_date)
+      $(tbody).append('<tr><td>' + filter[i].id + '</td><td>' + date.toDateString() + '</td><td>' + filter[i].country + '</td><td>' + filter[i].browser + '</td><td>' + filter[i].operatingSystem + '</td></tr>')
+    }                        
+  }
+})
 
-        $(document).ready(function() {
-            $.get("http://www.randyconnolly.com/funwebdev/services/visits/browsers.php").done(function(values) {
-                select = $("#filterBrowser")
-                Array.from(values).forEach(function(row) {
-                    $(select).append('<option value"' + row.id +'">' + row.name +'</option>')                    
-                })
-            }); 
-            $.get("http://www.randyconnolly.com/funwebdev/services/visits/os.php").done(function(values) {
-                select = $("#filterOS")
-                Array.from(values).forEach(function(row) {
-                    $(select).append('<option value"' + row.id +'">' + row.name +'</option>')                    
-                })
-            }); 
-            $.get("http://www.randyconnolly.com/funwebdev/services/visits/countries.php?continent=EU").done(function (values) {
-                select = $("#filterCountry")
-                Array.from(values).forEach(function (row) {
-                    $(select).append('<option value"' + row.id + '">' + row.name + '</option>')
-                })
-
-            });
-            var data=[];
-            $.get("http://www.randyconnolly.com/funwebdev/services/visits/visits.php?continent=EU&month=1&limit=100").done(function(values) {
-              data=values;  
-              tbody = $("#visitsBody")
-              for(var i=0;i<values.length;i++){
-                var date = new Date( values[i].visit_date)
-                $(tbody).append('<tr><td>'+values[i].id+'</td><td>' +date.toDateString() +'</td><td>'+values[i].country +'</td><td>'+values[i].browser +'</td><td>'+values[i].operatingSystem +'</td></tr>')   
-              }
-            });
-            $("#filterCountry").change(function () {
-                displayfilter();
-            })
-            $("#filterBrowser").change(function () {
-                displayfilter();
-            })
-            $("#filterOS").change(function () {
-                displayfilter();
-            })
-            function displayfilter() {
-                tbody = $("#visitsBody")
-                tbody.empty();
-                browser = $("#filterBrowser").val();
-                country = $("#filterCountry").val();
-                os = $("#filterOS").val();
-                console.log("browser : " + browser + " country : " + country + " os : " + os)
-                var filter = $.grep(data, function (row, i) {
-                    if (browser != 0 && os != 0 && country != 0) {
-                        return (row.country == country && row.operatingSystem == os && row.browser == browser)
-                    }
-                    else if (browser != 0 && country != 0) {
-                        return (row.country == country && row.browser == browser)
-                    }
-                    else if (browser != 0 && os != 0) {
-                        return (row.browser == browser && row.operatingSystem == os)
-                    }
-                    else if (os != 0 && country != 0) {
-                        return (row.country == country && row.operatingSystem == os)
-                    }
-                    else if (os != 0) {
-                        return (row.operatingSystem == os)
-                    }
-                    else if (browser != 0) {
-                        return (row.browser == browser)
-                    }
-                    else if (country != 0) {
-                        return (row.country == country)
-                    }
-                    else {
-                        return (data);
-                    }
-                });
-                for (var i = 0; i < filter.length; i++) {
-                    var date = new Date(filter[i].visit_date)
-                    $(tbody).append('<tr><td>' + filter[i].id + '</td><td>' + date.toDateString() + '</td><td>' + filter[i].country + '</td><td>' + filter[i].browser + '</td><td>' + filter[i].operatingSystem + '</td></tr>')
-                }
-            }
-        })
 </script>
 
 </head>
