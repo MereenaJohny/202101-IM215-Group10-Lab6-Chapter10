@@ -50,6 +50,53 @@
                 $(tbody).append('<tr><td>'+values[i].id+'</td><td>' +date.toDateString() +'</td><td>'+values[i].country +'</td><td>'+values[i].browser +'</td><td>'+values[i].operatingSystem +'</td></tr>')   
               }
             });
+            $("#filterCountry").change(function () {
+                displayfilter();
+            })
+            $("#filterBrowser").change(function () {
+                displayfilter();
+            })
+            $("#filterOS").change(function () {
+                displayfilter();
+            })
+            function displayfilter() {
+                tbody = $("#visitsBody")
+                tbody.empty();
+                browser = $("#filterBrowser").val();
+                country = $("#filterCountry").val();
+                os = $("#filterOS").val();
+                console.log("browser : " + browser + " country : " + country + " os : " + os)
+                var filter = $.grep(data, function (row, i) {
+                    if (browser != 0 && os != 0 && country != 0) {
+                        return (row.country == country && row.operatingSystem == os && row.browser == browser)
+                    }
+                    else if (browser != 0 && country != 0) {
+                        return (row.country == country && row.browser == browser)
+                    }
+                    else if (browser != 0 && os != 0) {
+                        return (row.browser == browser && row.operatingSystem == os)
+                    }
+                    else if (os != 0 && country != 0) {
+                        return (row.country == country && row.operatingSystem == os)
+                    }
+                    else if (os != 0) {
+                        return (row.operatingSystem == os)
+                    }
+                    else if (browser != 0) {
+                        return (row.browser == browser)
+                    }
+                    else if (country != 0) {
+                        return (row.country == country)
+                    }
+                    else {
+                        return (data);
+                    }
+                });
+                for (var i = 0; i < filter.length; i++) {
+                    var date = new Date(filter[i].visit_date)
+                    $(tbody).append('<tr><td>' + filter[i].id + '</td><td>' + date.toDateString() + '</td><td>' + filter[i].country + '</td><td>' + filter[i].browser + '</td><td>' + filter[i].operatingSystem + '</td></tr>')
+                }
+            }
         })
 </script>
 
